@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Data\Person;
 use Tests\TestCase;
 
 class CollectionTest extends TestCase
@@ -42,4 +43,14 @@ class CollectionTest extends TestCase
 
     $this->assertEquals([2,4,6], $result->all());
   }
+
+  public function testMapInto () {
+    $collection = collect(['kingabdi']);
+
+    $result = $collection->mapInto(Person::class);
+
+    $this->assertEquals([new Person('udin')], $result->all());
+
+    
+  } 
 }
