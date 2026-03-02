@@ -32,4 +32,14 @@ class CollectionTest extends TestCase
     $this->assertEquals(5, $result);
     $this->assertEquals([1,2,3,4], $collection->all());
   }
+
+  public function testMap() {
+    $collection = collect([1,2,3]);
+
+    $result = $collection->map( function($item) {
+      return $item * 2;
+    });
+
+    $this->assertEquals([2,4,6], $result->all());
+  }
 }
