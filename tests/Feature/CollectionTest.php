@@ -49,8 +49,59 @@ class CollectionTest extends TestCase
 
     $result = $collection->mapInto(Person::class);
 
-    $this->assertEquals([new Person('udin')], $result->all());
-
-    
+    $this->assertEquals([new Person('kingabdi')], $result->all());  
   } 
+
+  public function testMapSpread() {
+    $collection = collect([['udin', 'kingabdi'], ['Abdillatur', 'Rohman']]); 
+    $result = $collection->mapSpread( function($firstName, $lastName) {
+      $fullName = $firstName . ' ' . $lastName;
+      return new Person($fullName);
+    });
+
+    $this->assertEquals([new Person('udin kingabdi'), new Person('Abdillatur Rohman')], $result->all());
+  }
+
+
+//   $collection = collect([
+//     ['name' => 'kingabdi', 'dept' => 'IT'],
+//     ['name' => 'udin',     'dept' => 'HR'],
+//     ['name' => 'budi',     'dept' => 'IT'],
+//     ['name' => 'siti',     'dept' => 'HR'],
+// ]);
+
+// $result = $collection->mapToGroups(function($item) {
+//     return [$item['dept'] => $item['name']];
+// //          ↑ KEY            ↑ VALUE
+// });
+
+// [
+//     'IT' => ['kingabdi', 'budi'],
+//     'HR' => ['udin', 'siti'],
+// ]
+  public function testMapToGroups() {
+    $collection = collect([
+    ['name' => 'kingabdi', 'dept' => 'IT', 'years' => 5],
+    ['name' => 'udin',     'dept' => 'HR', 'years' => 1],
+    ['name' => 'budi',     'dept' => 'IT', 'years' => 3],
+    ['name' => 'siti',     'dept' => 'HR', 'years' => 2],
+]);
+
+   $result = $collection->mapToGroups(function($item) {
+    $status = $item['years'] >= 3 ? 'Dapat THR' : 'Belum THR';
+    return [$item['dept'] => ['name' => $item['name'], 'thr' => $status]];
+});
+
+    $this->assertEquals([
+     'IT' => [
+        ['name' => 'kingabdi', 'thr' => 'Dapat THR'],
+        ['name' => 'budi',     'thr' => 'Dapat THR'],
+        ['name' => 'andi',     'thr' => 'Belum THR'],
+    ],
+    'HR' => [
+        ['name' => 'udin',     'thr' => 'Belum THR'],
+        ['name' => 'siti',     'thr' => 'Belum THR'],
+    ],
+    ], $result->all());
+  }
 }
