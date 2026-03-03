@@ -93,15 +93,14 @@ class CollectionTest extends TestCase
 });
 
     $this->assertEquals([
-     'IT' => [
+     'IT' => collect([
         ['name' => 'kingabdi', 'thr' => 'Dapat THR'],
         ['name' => 'budi',     'thr' => 'Dapat THR'],
-        ['name' => 'andi',     'thr' => 'Belum THR'],
-    ],
-    'HR' => [
+    ]),
+    'HR' => collect([
         ['name' => 'udin',     'thr' => 'Belum THR'],
         ['name' => 'siti',     'thr' => 'Belum THR'],
-    ],
+    ]),
     ], $result->all());
   }
 }
