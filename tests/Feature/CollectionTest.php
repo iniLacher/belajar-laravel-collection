@@ -164,4 +164,32 @@ class CollectionTest extends TestCase
 
     $this->assertEquals('kingabdi, udin, somad and kingrohman', $wadahJoinGlue->join(', ', ' and '));
   }
+
+  public function testFiltering() {
+    $collection = collect([
+      'kingabdi' => 100,
+      'abdi' => 85,
+      'bamabang' => 55
+    ]);
+
+    $result = $collection->filter(function($value, $key) {
+      return $value >= 80;
+    });
+    $this->assertEquals(['kingabdi' => 100, 'abdi' => 85], $result->all());
+  }
+
+  public function testPartitioning() {
+    $collection = collect([
+      'kingabdi' => 100,
+      'abdi' => 85,
+      'bamabang' => 55
+    ]);
+
+    [$result1, $result2] = $collection->partition(function($value, $key) {
+      return $value >= 80;
+    });
+
+    $this->assertEquals(['kingabdi' => 100, 'abdi' => 85], $result1->all());
+    $this->assertEquals(['bamabang' => 55], $result2->all());
+  }
 }
