@@ -103,4 +103,65 @@ class CollectionTest extends TestCase
     ]),
     ], $result->all());
   }
+
+
+  public function testZip() {
+    $collection1 = collect(['kingabdi', 'rohman', 'abdillatur']);
+    $result =$collection1->zip(['rich', 'happy', 'beriman']);
+
+    $this->assertEquals([collect(['kingabdi', 'rich']), collect(['rohman', 'happy']), collect(['abdillatur', 'beriman'])], $result->all());
+  }
+
+
+  public function testConcat() {
+    $collection1 = collect([1,2,3]);
+    $result = $collection1->concat([4,5,6]);
+
+    $this->assertEquals([1,2,3,4,5,6], $result->all());
+  }
+
+  public function testCombine(){
+    $collection1 = collect(['name', 'age', 'city']);
+    $result = $collection1->combine(['kingabdi', 78, 'khazakstan']);
+    $this->assertEquals(['name' => 'kingabdi', 'age' => 78, 'city' => 'khazakstan'], $result->all());
+  }
+
+  public function testCollapse() {
+    $collection1 = collect([[1,2,3], [4,5,6], [7,8,9]]);
+    $result = $collection1->collapse();
+
+    $this->assertEquals([1,2,3,4,5,6,7,8,9], $result->all());
+  }
+
+  public function testFlatMap() {
+    $collection = collect([
+      ['name' => 'kingabdi', 'hobbies' => ['coding', 'gaming']],
+      ['name' => 'udin',     'hobbies' => ['cooking', 'traveling']],
+      ['name' => 'rohman',     'hobbies' => ['praying', 'reading quran']],
+      ['name' => 'abdul',     'hobbies' => ['karauke', 'mangku LC']]
+    ]);
+
+    $result = $collection->flatMap(function($item) {
+      return $item['hobbies'];
+    });
+
+    $this->assertEquals(['coding', 'gaming', 'cooking', 'traveling', 'praying', 'reading quran', 'karauke', 'mangku LC'], $result->all());
+  }
+
+
+  public function testStringRepresentation() {
+    $collection = collect([
+      ['name' => 'kingabdi', 'dept' => 'IT'],
+      ['name' => 'udin', 'dept' => 'ngarit'],
+      ['name' => 'somad', 'dept' => 'bar'],
+      ['name' => 'kingrohman', 'dept' => 'ustadz'],
+    ]);
+
+      $result = $collection->implode('name', ', ');
+      $this->assertEquals('kingabdi, udin, somad, kingrohman', $result);
+
+    $wadahJoinGlue = collect(['kingabdi', 'udin', 'somad', 'kingrohman']);
+
+    $this->assertEquals('kingabdi, udin, somad and kingrohman', $wadahJoinGlue->join(', ', ' and '));
+  }
 }
