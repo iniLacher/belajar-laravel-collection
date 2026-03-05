@@ -192,4 +192,14 @@ class CollectionTest extends TestCase
     $this->assertEquals(['kingabdi' => 100, 'abdi' => 85], $result1->all());
     $this->assertEquals(['bamabang' => 55], $result2->all());
   }
+
+
+  public function testTesting()  {
+    $collection = collect(['budi', 'udin', 'siti']);
+
+    $this->assertTrue($collection->contains('udin'));
+    $this->assertTrue($collection->contains(function ($value, $key) {
+      return $value === 'udin';
+    }));
+  }
 }
