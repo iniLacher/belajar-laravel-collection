@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Data\Person;
+use GrahamCampbell\ResultType\Result;
 use Tests\TestCase;
 
 class CollectionTest extends TestCase
@@ -263,6 +264,26 @@ class CollectionTest extends TestCase
     $result = collect([1,2,3,4,5])->takeWhile(function ($value, $key) {
       return $value < 4;
     });
+    $this->assertEquals([1,2,3], $result->values()->all());
+  }
+
+  public function testSkip () {
+    $collection = collect([1,2,3,4,5,6]);
+
+    $result = $collection->skip(3);
+
+    $this->assertEquals([4,5,6], $result->values()->all());
+
+    $result = $collection->skipUntil(function($value, $key){
+      return $value === 3;
+    });
+
+    $this->assertEqualsCanonicalizing([3,4,5,6], $result->all());
+
+    $result = $collection->skipWhile(function($value, $key){
+      return $value > 3;
+    });
+
     $this->assertEquals([1,2,3], $result->values()->all());
   }
 }
