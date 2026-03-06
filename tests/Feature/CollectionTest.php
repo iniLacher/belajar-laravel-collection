@@ -228,4 +228,41 @@ class CollectionTest extends TestCase
       ]),
     ], $result->all());
   }
+
+  public function testSlicing() {
+    $collection = collect([1,2,3,4,5]);
+    $result = $collection->slice(2);
+    $this->assertEquals([3,4,5], $result->values()->all());
+
+
+    $coll = collect([1,2,3,4,5]);
+    $resultColl = $coll->slice(1, 3);
+    $this->assertEquals([2,3,4], $resultColl->values()->all());
+
+    $collStr = collect(['kingabdi', 'udin', 'siti', 'rohman', 'abdillatur']);
+    $resultCollStr = $collStr->slice(1, 3);
+    $this->assertEquals(['udin', 'siti', 'rohman'], $resultCollStr->values()->all());
+    // klo nggak mau  pake values() maka bisa pake assertEqualsCanonicalizing untuk mengabaikan indexnya, karena slice itu kan memotong jadi hasilnya kan di mulai dari 1 indexnya yaitu udin,dan si assertEquals itu membandingkan indexnya dari 0,makannya kalo pake cara biasa dia akan error.
+  }
+
+
+  public function testTake() {
+    $collection = collect([1,2,3,4,5]);
+    $result = $collection->take(3);
+    $this->assertEquals([1,2,3], $result->values()->all());
+
+    $coll = collect([1,2,3,4,5]);
+    $resultColl = $coll->take(-2);
+    $this->assertEquals([4,5], $resultColl->values()->all());
+
+    $result  = $collection->takeUntil(function ($value, $key) {
+      return $value === 5;
+    });
+    $this->assertEquals([1,2,3,4], $result->values()->all());
+
+    $result = collect([1,2,3,4,5])->takeWhile(function ($value, $key) {
+      return $value < 4;
+    });
+    $this->assertEquals([1,2,3], $result->values()->all());
+  }
 }
