@@ -284,6 +284,88 @@ class CollectionTest extends TestCase
       return $value > 3;
     });
 
-    $this->assertEquals([1,2,3], $result->values()->all());
+    $this->assertEquals([1,2,3,4,5,6], $result->values()->all());
+    // awas ini jebakan karena jika dari pengecekan pertama dia sudah false maka semua data akan di tampilkan alias tidak di skip karena operasinya skip sudah berhenti 
+  }
+
+
+  public function testChunked() {
+    $collection = collect([1,2,3,4,5,6,7,8,9,10]);
+    $result = $collection->chunk(3);
+
+    $this->assertEqualsCanonicalizing([1,2,3], $result->all()[0]->all());
+    $this->assertEqualsCanonicalizing([4,5,6], $result->all()[1]->all());
+    $this->assertEqualsCanonicalizing([7,8,9], $result->all()[2]->all());
+    $this->assertEqualsCanonicalizing([10], $result->all()[3]->all());
+  }
+
+  public function testRetrive() {
+    $collection = collect([1,2,3,4,5,6,7,8,9,10]);
+    $result = $collection->first();
+    $this->assertEquals(1, $result);
+
+    $result = $collection->first(function($value, $key){
+      return $value > 6;
+    });
+    $this->assertEquals(7, $result);
+
+    $result = $collection->last();
+    $this->assertEquals(10, $result);
+
+    $result = $collection->last(function($value,$key){
+      return $value < 3;
+    });
+    $this->assertEquals(2, $result);
+  }
+
+  public function testRandom() {
+    $collection = collect([1,2,3,4]);
+    $result = $collection->random();
+    $this->assertTrue(in_array($result,[1,2,3,4]));
+    // abaikan underscore merah di in_array
+  }
+
+  public function testCheckingExistency() {
+    $collection = collect([1,2,3,4,5,6,7,8]);
+    $this->assertTrue($collection->isNotEmpty());
+    $this->assertFalse($collection->isEmpty());
+    $this->assertTrue($collection->contains(1));
+    $this->assertTrue($collection->contains(function ($value, $key) {
+      return $value === 8;
+    }));
+  }
+
+
+  public function testOrdering() {
+    $collection = collect([3,1,5,2,6,7,8,5,4,6]);
+
+    $result = $collection->sort();
+    $this->assertEquals([1,2,3,4,5,5,6,6,7,8], $result->values()->all());
+
+    $result = $collection->reverse();
+    $this->assertEquals([6,4,5,8,7,6,2,5,1,3], $result->values()->all());
+
+    $collection2 = collect([
+      ['name' => 'abdi', 'age' => 21],
+      ['name' => 'rohman', 'age' => 27],
+      ['name' => 'alvin', 'age' => 20],
+      ['name' => 'bela', 'age' => 26],
+      ['name' => 'ivan', 'age' => 21],
+    ]);
+    $result = $collection2->sortBy('age');
+    $this->assertEquals([
+      ['name' => 'alvin', 'age' =>20],
+      ['name' => 'abdi', 'age' =>21],
+      ['name' => 'ivan', 'age' =>21],
+      ['name' => 'bela', 'age' =>26],
+      ['name' => 'rohman', 'age' =>27],
+    ], $result->values()->all());
+
+
+    $collection3 = collect(['banana' => 1, 'cerry' => 2, 'apple' => 4]);
+    $result = $collection3->sortKeys();
+    $this->assertEquals([
+      'apple' => 4, 'banana' => 1, 'cerry' => 2
+    ], $result->all());
   }
 }
