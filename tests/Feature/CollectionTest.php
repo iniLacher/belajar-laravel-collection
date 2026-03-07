@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Data\Person;
-use GrahamCampbell\ResultType\Result;
+use Illuminate\Support\LazyCollection;
 use Tests\TestCase;
 
 class CollectionTest extends TestCase
@@ -367,5 +367,38 @@ class CollectionTest extends TestCase
     $this->assertEquals([
       'apple' => 4, 'banana' => 1, 'cerry' => 2
     ], $result->all());
+  }
+
+  public function testAgregate() {
+    $collection = collect([1,2,3,4,5]);
+    $result = $collection->sum();
+    $this->assertEquals(15, $result);
+    $result = $collection->avg();
+    $this->assertEquals(3, $result);
+    $result = $collection->min();
+    $this->assertEquals(1, $result);
+    $result = $collection->max();
+    $this->assertEquals(5, $result);
+    $result = $collection->count();
+    $this->assertEquals(5, $result);
+  }
+
+  public function testReduce() {
+    $collection = collect([1,2,3,4,5,20,10]);
+    $result = $collection->reduce(function ($carry, $item) {
+      return $carry + $item;
+    });
+    $this->assertEquals(45, $result);
+  }
+
+  public function testLazyCollection() {
+    $collection = LazyCollection::make(function () {
+      $value = 0;
+      while(true) {
+        yield ++$value;
+      }
+    });
+    $result = $collection->take(10);
+    $this->assertEquals([1,2,3,4,5,6,7,8,9,10], $result->values()->all());
   }
 }
